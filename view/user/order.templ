@@ -10,6 +10,7 @@ import (
 
 templ Order(product models.Product, size string) {
     @layout.User() {
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
         <link rel="stylesheet" href="/static/styles/user/order.css">
         <div class={Container()}>
             <h1>Place Order</h1>
@@ -21,7 +22,7 @@ templ Order(product models.Product, size string) {
                         <h3 class="price">&#8360;. {fmt.Sprintf("%d",product.Price)}</h3>
                     </div>
                 </div>
-                <form hx-post={fmt.Sprintf("/order/%s",product.Id)}>
+                <form hx-post={fmt.Sprintf("/order/%s",product.Id)} hx-target="closest form" hx-swap="afterend">
                     <input type="hidden" name="size" value={size} />
                     <input type="text" name="name" placeholder="Name"/>
                     <textarea name="address" placeholder="Adress"></textarea>
@@ -32,11 +33,64 @@ templ Order(product models.Product, size string) {
                     <input type="number" name="quantity" placeholder="Quantity"/>
                     <select name="payment" placeholder="Delivery method">
                         <option value="cod">Cash on delivery</option>
-                        <option value="online">Credit card</option>
+                        <option value="online">Online Payment</option>
                     </select>
                     <button type="submit" class="button-primary" style="margin-top: 2rem;">Place Order</button>
                 </form>
             </div>
         </div>
     }
+}
+
+templ OnlinePayment(order models.Order,ord map[string]interface{},key string) {
+  @templ.JSONScript("order-data", order)
+  @templ.JSONScript("ord-data", ord)
+  @templ.JSONScript("key-data", key)
+
+  <script id="order-data" type="application/json"></script>
+  <script id="ord-data" type="application/json"></script>
+  <script id="key-data" type="application/json"></script>
+
+  <script>
+    var order = JSON.parse(document.getElementById("order-data").textContent)
+    var ord = JSON.parse(document.getElementById("ord-data").textContent)
+    var key = JSON.parse(document.getElementById("key-data").textContent)
+
+    var options = {
+        key: key,
+        amount: order.Total,
+        currency: "INR",
+        name: "Stitch",
+        description: "Cloth Shop",
+        "order_id": ord.id,
+        handler: async function (response) {
+          var url = "/payment-verification/" + order.id
+          var body = JSON.stringify({"orderId": response.razorpay_order_id, "paymentId": response.razorpay_payment_id, "razorpaySignature": response.razorpay_signature})
+          var res = await fetch(url,{method: "POST", body:body})
+          if (res.ok) {
+            var json = await res.json()
+            alert(json)
+          }
+        },
+        modal: {
+          ondismiss: async function() {
+            var url = "/delete-order/" + order.id
+            var res = await fetch(url)
+            if (res.ok) {
+                var json = await res.json()
+                alert(json)
+            } 
+          }
+        },
+        prefil: {
+            name: order.Name,
+            contact: order.Phone
+        },
+        theme: "#ff0000"
+    }
+
+    var raz = new Razorpay(options) 
+    raz.open();
+
+  </script>
 }

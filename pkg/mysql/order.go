@@ -43,3 +43,15 @@ func DeleteOrder(id string, productId string) error {
 	var _, err = Db.Exec(query, id, productId)
 	return err
 }
+
+func OrderStatusPayment(id string, status string) error {
+	var query = "UPDATE orders SET status = ? WHERE id = ?;"
+	var _, err = Db.Exec(query, status, id)
+	return err
+}
+
+func DeletePendingOrder(id string) error {
+	var query = "DELETE FROM orders WHERE id = ? AND status = 'pending';"
+	var _, err = Db.Exec(query, id)
+	return err
+}

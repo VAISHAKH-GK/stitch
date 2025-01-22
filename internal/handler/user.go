@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/FulgurCode/stitch/models"
 	"github.com/FulgurCode/stitch/pkg/mysql"
@@ -11,6 +12,7 @@ import (
 	"github.com/FulgurCode/stitch/view/user"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/razorpay/razorpay-go"
 )
 
 // Home page handler
@@ -87,16 +89,38 @@ func OrderPost(c echo.Context) error {
 	}
 
 	order.ProductId = productId
-	order.Status = "ordered"
+	if order.Payment == "online" {
+		order.Status = "pending"
+	} else {
+		order.Status = "ordered"
+	}
 	if order.Quantity == 0 {
 		order.Quantity = 1
 	}
 	order.Total = product.Price * order.Quantity
 
 	var orderId = uuid.New()
+	order.Id = string(orderId.String())
 	err = mysql.MakeOrder(order, orderId)
 	if err != nil {
 		fmt.Println(err)
+	}
+
+	if order.Payment == "online" {
+		var key = os.Getenv("RAZORPAY_KEY")
+		var secret = os.Getenv("RAZORPAY_SECRET")
+		var client = razorpay.NewClient(key, secret)
+		var ord = map[string]interface{}{
+			"amount":   order.Total * 100,
+			"currency": "INR",
+		}
+		body, err := client.Order.Create(ord, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		var component = user.OnlinePayment(order, body, key)
+		return utils.Render(c, component)
 	}
 
 	if c.Request().Header.Get("HX-Request") == "true" {
@@ -199,6 +223,7 @@ func CartOrderPost(c echo.Context) error {
 
 	var cart = utils.GetSessionAll(c, "cart")
 	var orderId = uuid.New()
+	var total int = 0
 	for id, size := range cart {
 		var product, _ = mysql.GetProductById(id.(string))
 		var order models.Order = body
@@ -213,6 +238,7 @@ func CartOrderPost(c echo.Context) error {
 		if err != nil {
 			fmt.Println(err)
 		}
+		total += order.Total
 	}
 
 	utils.DeleteSession(c, "cart")
@@ -223,4 +249,31 @@ func CartOrderPost(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusSeeOther, "/cart")
+}
+
+func VerifyOnlinePayment(c echo.Context) error {
+	var orderId = c.Param("orderId")
+	var data models.VerifyOrder
+	var err = c.Bind(&data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if err := utils.RazorPaymentVerification(data); err != nil {
+		mysql.OrderStatusPayment(orderId, "ordered")
+		return c.JSON(200, "Ordered Successfully And Payment Verified")
+	}
+
+	return c.JSON(406, "Payment Verification Failed")
+}
+
+func DeletePendingOrder(c echo.Context) error {
+	var orderId = c.Param("orderId")
+	var err = mysql.DeletePendingOrder(orderId)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(500, "Failed")
+	}
+
+	return c.JSON(200, "Order Payment Failed / Cancelled")
 }

@@ -39,3 +39,9 @@ type Order struct {
 	Total        int    `json:"total" form:"total"`
 	Status       string `json:"status" form:"status"`
 }
+
+type VerifyOrder struct {
+	OrderId           string `json:"orderId" form:"orderId"`
+	PaymentId         string `json:"paymentId" form:"paymentId"`
+	RazorpaySignature string `json:"razorpaySignature" form:"razorpaySignature"`
+}

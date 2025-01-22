@@ -40,6 +40,8 @@ func Run(port string) {
 	app.POST("/cart/order", handler.CartOrderPost)
 	app.GET("add-to-cart/:productId", handler.AddToCart)
 	app.DELETE("delete-cart/:productId", handler.DeleteFromCart)
+	app.POST("/payment-verification/:orderId", handler.VerifyOnlinePayment)
+	app.GET("/delete-order/:orderId", handler.DeletePendingOrder)
 
 	app.GET("/admin", utils.CheckLogin(handler.Admin))
 
