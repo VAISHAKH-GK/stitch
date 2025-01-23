@@ -259,11 +259,12 @@ func VerifyOnlinePayment(c echo.Context) error {
 		fmt.Println(err)
 	}
 
-	if err := utils.RazorPaymentVerification(data); err != nil {
+	if err := utils.RazorPaymentVerification(data); err == nil {
 		mysql.OrderStatusPayment(orderId, "ordered")
 		return c.JSON(200, "Ordered Successfully And Payment Verified")
 	}
 
+	fmt.Println(err)
 	return c.JSON(406, "Payment Verification Failed")
 }
 

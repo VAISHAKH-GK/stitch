@@ -66,7 +66,7 @@ templ OnlinePayment(order models.Order,ord map[string]interface{},key string) {
         handler: async function (response) {
           var url = "/payment-verification/" + order.id
           var body = JSON.stringify({"orderId": response.razorpay_order_id, "paymentId": response.razorpay_payment_id, "razorpaySignature": response.razorpay_signature})
-          var res = await fetch(url,{method: "POST", body:body})
+          var res = await fetch(url,{method: "POST", headers: {"Content-Type": "application/json"}, body:body})
           if (res.ok) {
             var json = await res.json()
             alert(json)
