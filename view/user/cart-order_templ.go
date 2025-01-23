@@ -48,7 +48,7 @@ func CartOrder(products []models.Product) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<link rel=\"stylesheet\" href=\"/static/styles/user/cart-order.css\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<script src=\"https://checkout.razorpay.com/v1/checkout.js\"></script> <link rel=\"stylesheet\" href=\"/static/styles/user/cart-order.css\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func CartOrder(products []models.Product) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><form hx-post=\"/cart/order\"><input type=\"text\" name=\"name\" placeholder=\"Name\"> <textarea name=\"address\" placeholder=\"Adress\"></textarea> <input type=\"text\" name=\"house\" placeholder=\"House no. or House name\"> <input type=\"text\" name=\"pin\" placeholder=\"Pin code\"> <input type=\"text\" name=\"city\" placeholder=\"City\"> <input type=\"tel\" name=\"phone\" placeholder=\"Phone no.\"> <select name=\"payment\" placeholder=\"Delivery method\"><option value=\"cod\">Cash on delivery</option> <option value=\"online\">Online Payment</option></select> <button type=\"submit\" class=\"button-primary\" style=\"margin-top: 2rem;\">Place Order</button></form></div></div><script>\n            function emptyCallback() {\n                setTimeout(() => {\n                    if (document.querySelectorAll('.product-card-cart').length === 0) {\n                        window.location.href = '/';\n                    }\n                }, 100);\n                return true;\n            }\n        </script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><form hx-post=\"/cart/order\" hx-target=\"closest form\" hx-swap=\"afterend\"><input type=\"text\" name=\"name\" placeholder=\"Name\"> <textarea name=\"address\" placeholder=\"Adress\"></textarea> <input type=\"text\" name=\"house\" placeholder=\"House no. or House name\"> <input type=\"text\" name=\"pin\" placeholder=\"Pin code\"> <input type=\"text\" name=\"city\" placeholder=\"City\"> <input type=\"tel\" name=\"phone\" placeholder=\"Phone no.\"> <select name=\"payment\" placeholder=\"Delivery method\"><option value=\"cod\">Cash on delivery</option> <option value=\"online\">Online Payment</option></select> <button type=\"submit\" class=\"button-primary\" style=\"margin-top: 2rem;\">Place Order</button></form></div></div><script>\n            function emptyCallback() {\n                setTimeout(() => {\n                    if (document.querySelectorAll('.product-card-cart').length === 0) {\n                        window.location.href = '/';\n                    }\n                }, 100);\n                return true;\n            }\n        </script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -122,7 +122,7 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/static/images/" + product.Id + "-main")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 52, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 53, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +135,7 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(product.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 54, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 55, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -148,7 +148,7 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", product.Price))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 55, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 56, Col: 53}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -161,7 +161,7 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/delete-cart/%s", product.Id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 58, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 59, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -174,7 +174,7 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/item/%s", product.Id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 59, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 60, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -187,13 +187,54 @@ func OrdersCard(product models.Product) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/item/%s", product.Id))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 59, Col: 138}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/user/cart-order.templ`, Line: 60, Col: 138}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" hx-target=\"body\">View Product</button></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func OnlinePaymentCart(order models.Order, ord map[string]interface{}, key string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templ.JSONScript("order-data", order).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.JSONScript("ord-data", ord).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.JSONScript("key-data", key).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script id=\"order-data\" type=\"application/json\"></script><script id=\"ord-data\" type=\"application/json\"></script><script id=\"key-data\" type=\"application/json\"></script><script>\n    var order = JSON.parse(document.getElementById(\"order-data\").textContent)\n    var ord = JSON.parse(document.getElementById(\"ord-data\").textContent)\n    var key = JSON.parse(document.getElementById(\"key-data\").textContent)\n  console.log(order)\n\n    var options = {\n        key: key,\n        amount: order.Total,\n        currency: \"INR\",\n        name: \"Stitch\",\n        description: \"Cloth Shop\",\n        \"order_id\": ord.id,\n        handler: async function (response) {\n          var url = \"/payment-verification/\" + order.id\n          var body = JSON.stringify({\"orderId\": response.razorpay_order_id, \"paymentId\": response.razorpay_payment_id, \"razorpaySignature\": response.razorpay_signature})\n          console.log(body)\n          var res = await fetch(url,{method: \"POST\", headers: {\"Content-Type\": \"application/json\"}, body:body})\n          if (res.ok) {\n            var json = await res.json()\n            alert(json)\n          } else {\n            var json = await res.json()\n            alert(json)\n          }\n        },\n        modal: {\n          ondismiss: async function() {\n            var url = \"/delete-order/\" + order.id\n            var res = await fetch(url)\n            if (res.ok) {\n                var json = await res.json()\n                alert(json)\n            } \n          }\n        },\n        prefil: {\n            name: order.Name,\n            contact: order.Phone\n        },\n        theme: \"#ff0000\"\n    }\n\n    var raz = new Razorpay(options) \n    raz.open();\n\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

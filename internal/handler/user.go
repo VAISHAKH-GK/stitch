@@ -223,13 +223,18 @@ func CartOrderPost(c echo.Context) error {
 
 	var cart = utils.GetSessionAll(c, "cart")
 	var orderId = uuid.New()
+	body.Id = orderId.String()
 	var total int = 0
 	for id, size := range cart {
 		var product, _ = mysql.GetProductById(id.(string))
 		var order models.Order = body
 
 		order.ProductId = product.Id
-		order.Status = "ordered"
+		if body.Payment == "online" {
+			order.Status = "pending"
+		} else {
+			order.Status = "ordered"
+		}
 		order.Quantity = 1
 		order.Total = product.Price
 		order.Size = size.(string)
@@ -240,8 +245,23 @@ func CartOrderPost(c echo.Context) error {
 		}
 		total += order.Total
 	}
+	if body.Payment == "online" {
+		var key = os.Getenv("RAZORPAY_KEY")
+		var secret = os.Getenv("RAZORPAY_SECRET")
+		var client = razorpay.NewClient(key, secret)
+		var ord = map[string]interface{}{
+			"amount":   total * 100,
+			"currency": "INR",
+		}
+		order, err := client.Order.Create(ord, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println("submit cart")
 
-	utils.DeleteSession(c, "cart")
+		var component = user.OnlinePaymentCart(body, order, key)
+		return utils.Render(c, component)
+	}
 
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Location", "/cart")
